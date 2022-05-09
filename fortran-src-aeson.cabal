@@ -28,6 +28,7 @@ library
   exposed-modules:
       Language.Fortran.Extra.JSON
       Language.Fortran.Extra.JSON.Example
+      Language.Fortran.Extra.JSON.Position
   other-modules:
       Paths_fortran_src_aeson
   hs-source-dirs:
@@ -70,6 +71,7 @@ library
     , base
     , bytestring
     , fortran-src
+    , megaparsec
     , text
   default-language: Haskell2010
 
@@ -118,6 +120,7 @@ executable bytepatch
     , bytestring
     , fortran-src
     , fortran-src-aeson
+    , megaparsec
     , optparse-applicative
     , text
     , yaml

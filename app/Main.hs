@@ -1,6 +1,6 @@
 module Main where
 
-import Language.Fortran.Extra.JSON
+import Language.Fortran.Extra.JSON()
 import Control.Monad.IO.Class
 import Options.Applicative qualified as OA
 import Language.Fortran.Parser qualified as F.Parser

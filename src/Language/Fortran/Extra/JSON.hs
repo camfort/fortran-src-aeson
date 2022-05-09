@@ -2,8 +2,9 @@
 
 module Language.Fortran.Extra.JSON where
 
+import Language.Fortran.Extra.JSON.Position()
+
 import Language.Fortran.Version
-import Language.Fortran.Util.Position
 import Language.Fortran.AST.Literal
 import Language.Fortran.AST.Literal.Boz qualified as Boz
 import Language.Fortran.AST.Literal.Boz
@@ -60,10 +61,6 @@ gtj = genericToJSON
 
 instance (ToJSON (t a), ToJSON a) => ToJSON (AList t a) where toJSON = gtj $ jc
 instance (ToJSON a, ToJSON (t1 a), ToJSON (t2 a)) => ToJSON (ATuple t1 t2 a)
-
-instance ToJSON Position where toJSON = gtj $ jcProd $ drop $ length "pos"
---instance ToJSON SrcSpan where toJSON = gtj $ jcProd $ drop $ length "ss"
-instance ToJSON SrcSpan where toJSON _ = Null
 
 instance ToJSON a => ToJSON (KindParam a) where toJSON = gtj $ jcSumDrop "KindParam"
 
