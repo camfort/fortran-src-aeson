@@ -9,13 +9,17 @@ import Data.ByteString qualified as B
 import Data.Yaml qualified as Yaml
 
 data Cfg = Cfg
-  { cfgCmd :: Cmd
+  { cfgVer :: FortranVersion
+  , cfgCmd :: Cmd
   }
 
 data Cmd = CmdEncode FilePath | CmdDecode FilePath
 
 pCfg :: OA.Parser Cfg
-pCfg = Cfg <$> pCmd
+pCfg = Cfg <$> pFVer <*> pCmd
+
+pFVer :: OA.Parser FortranVersion
+pFVer = OA.option (OA.maybeReader selectFortranVersion) $ OA.long "version" <> OA.short 'v' <> OA.help "Fortran version" <> OA.metavar "FORTRAN_VER"
 
 pCmd :: OA.Parser Cmd
 pCmd = OA.hsubparser $
@@ -36,7 +40,7 @@ main = do
     case cfgCmd cfg of
       CmdEncode fp -> do
         bs <- B.readFile fp
-        case (F.Parser.byVer Fortran90) fp bs of
+        case (F.Parser.byVer (cfgVer cfg)) fp bs of
           Left  e   -> print e
           Right src -> do
             B.putStr $ Yaml.encode src

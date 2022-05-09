@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Language.Fortran.Extra.JSON.Position where
@@ -18,10 +19,10 @@ type Parser = Parsec Void Text
 
 pPosition :: Parser Position
 pPosition = do
-    posLine   <- L.decimal
+    posLine'   <- L.decimal
     void $ char ':'
-    posColumn <- L.decimal
-    return initPosition { posLine = posLine, posColumn = posColumn }
+    posColumn' <- L.decimal
+    return initPosition { posLine = posLine', posColumn = posColumn' }
 
 -- TODO better error reporting
 instance ToJSON   Position where toJSON = String . tshow
