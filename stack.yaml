@@ -3,4 +3,4 @@ packages: [.]
 
 extra-deps:
 - git: https://github.com/camfort/fortran-src
-  commit: 348459ae198b1c487fbe858e1d7f1434f4502424
+  commit: 7d790cedc935f91b96aa1b8e88107438d9b906b5

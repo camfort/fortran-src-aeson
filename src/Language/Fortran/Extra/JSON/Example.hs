@@ -2,7 +2,7 @@
 
 module Language.Fortran.Extra.JSON.Example where
 
-import Language.Fortran.Extra.JSON
+import Language.Fortran.Extra.JSON.Helpers
 import Language.Fortran.Util.Position
 import Language.Fortran.AST.Literal
 import Language.Fortran.AST
