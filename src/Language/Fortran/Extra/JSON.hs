@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Fortran.Extra.JSON where
+module Language.Fortran.Extra.JSON() where
 
 import Language.Fortran.Extra.JSON.Helpers
 import Language.Fortran.Extra.JSON.Supporting()
@@ -92,7 +92,7 @@ instance ToJSON a => ToJSON (Declarator a) where
     -- TODO toEncoding
 
 instance ToJSON a => ToJSON (Suffix a) where
-    toJSON (SfxBind a s e) = toJSONAnno "bind" a s ["expr" .= e]
+    toJSON (SfxBind a s e) = tja "bind" a s ["expr" .= e]
     -- TODO toEncoding
 
 instance ToJSON a => ToJSON (Attribute a) where

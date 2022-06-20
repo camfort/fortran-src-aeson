@@ -1,8 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 
--- | Helpers for defining Aeson instances for fortran-src types.
+{- | Helpers for defining Aeson instances for fortran-src types.
 
-module Language.Fortran.Extra.JSON.Helpers where
+To work around dependency awkwardness, we have to write an unusual concrete
+context @'ToJSON' 'SrcSpan'@. It seems to work fine.
+-}
+
+module Language.Fortran.Extra.JSON.Helpers
+  ( toJSONAnnoMerge
+  , toJSONAnnoTaggedObj
+  , jcProd, jcProdDrop
+  , jcSum, jcSumDrop
+  , jcEnum, jcEnumDrop
+  , tja, gtj, gte
+  ) where
 
 import Data.Aeson hiding ( Value )
 import Data.Aeson qualified as Aeson
@@ -11,6 +22,37 @@ import Language.Fortran.Util.Position ( SrcSpan )
 import Data.Text ( Text )
 
 import GHC.Generics ( Generic, Rep )
+
+-- | Shortcut for writing a 'toJSON' definition for a fortran-src AST node type,
+--   intended to be used for sum types.
+--
+-- Flat/concise version which merges all keys into the same object.
+toJSONAnnoMerge
+    :: (ToJSON a, ToJSON SrcSpan)
+    => Text -> a -> SrcSpan -> [Aeson.Pair] -> Aeson.Value
+toJSONAnnoMerge t a ss m = object $
+  [ "anno"     .= a
+  , "span"     .= ss
+  , "tag"      .= t ] <> m
+
+-- | Shortcut for writing a 'toJSON' definition for a fortran-src AST node type,
+--   intended to be used for sum types.
+--
+-- "Safe" version which approximates Aeson's default 'Data.Aeson.TaggedObject'
+-- sum encoding strategy, but with two extra fields extracted out.
+toJSONAnnoTaggedObj
+    :: (ToJSON a, ToJSON SrcSpan)
+    => Text -> a -> SrcSpan -> [Aeson.Pair] -> Aeson.Value
+toJSONAnnoTaggedObj t a ss m = object
+  [ "anno"     .= a
+  , "span"     .= ss
+  , "tag"      .= t
+  , "contents" .= object m ]
+
+-- | Shortcut for selected fortran-src AST node type 'toJSON' strategy.
+tja :: (ToJSON a, ToJSON SrcSpan)
+    => Text -> a -> SrcSpan -> [Aeson.Pair] -> Aeson.Value
+tja = toJSONAnnoMerge
 
 -- | Base Aeson generic deriver config for product types.
 jcProd :: (String -> String) -> Aeson.Options
@@ -46,10 +88,6 @@ jcEnum f = Aeson.defaultOptions
 jcEnumDrop :: String -> Aeson.Options
 jcEnumDrop = jcEnum . drop . length
 
--- | Base Aeson config for non-record product types (1 cons, no named fields).
-jc :: Aeson.Options
-jc = jcProd id
-
 -- | Shortcut for common function 'genericToJSON'
 gtj :: (Generic a, Aeson.GToJSON' Aeson.Value Aeson.Zero (Rep a)) => Aeson.Options -> a -> Aeson.Value
 gtj = genericToJSON
@@ -57,28 +95,3 @@ gtj = genericToJSON
 -- | Shortcut for common function 'genericToEncoding'
 gte :: (Generic a, Aeson.GToJSON' Aeson.Encoding Aeson.Zero (Rep a)) => Aeson.Options -> a -> Aeson.Encoding
 gte = genericToEncoding
-
--- TODO weird context due to dependency awkwardness
--- safe, clean version: doesn't merge keys
-toJSONAnno
-    :: (ToJSON a, ToJSON SrcSpan)
-    => Text -> a -> SrcSpan -> [Aeson.Pair] -> Aeson.Value
-toJSONAnno t a ss m = object
-  [ "anno"     .= a
-  , "span"     .= ss
-  , "tag"      .= t
-  , "contents" .= object m ]
-
--- TODO weird context due to dependency awkwardness
--- concise version: merge keys
-toJSONAnno'
-    :: (ToJSON a, ToJSON SrcSpan)
-    => Text -> a -> SrcSpan -> [Aeson.Pair] -> Aeson.Value
-toJSONAnno' t a ss m = object $
-  [ "anno"     .= a
-  , "span"     .= ss
-  , "tag"      .= t ] <> m
-
-tja :: (ToJSON a, ToJSON SrcSpan)
-    => Text -> a -> SrcSpan -> [Aeson.Pair] -> Aeson.Value
-tja = toJSONAnno'

@@ -3,7 +3,7 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Fortran.Extra.JSON.Supporting where
+module Language.Fortran.Extra.JSON.Supporting() where
 
 import Language.Fortran.Extra.JSON.Helpers
 import Language.Fortran.Extra.Util
@@ -12,13 +12,12 @@ import Language.Fortran.Util.Position
 import Language.Fortran.Version
 import Language.Fortran.AST.AList
 
--- TODO
 instance (ToJSON (t a), ToJSON a) => ToJSON (AList t a) where
-    toJSON     = gtj $ jc
-    toEncoding = gte $ jc
+    toJSON     = gtj $ jcProdDrop "alist"
+    toEncoding = gte $ jcProdDrop "alist"
 instance (ToJSON a, ToJSON (t1 a), ToJSON (t2 a)) => ToJSON (ATuple t1 t2 a) where
-    toJSON     = gtj $ jc
-    toEncoding = gte $ jc
+    toJSON     = gtj $ jcProdDrop "atuple"
+    toEncoding = gte $ jcProdDrop "atuple"
 
 instance ToJSON FortranVersion where
     toJSON     = gtj $ jcEnumDrop mempty
