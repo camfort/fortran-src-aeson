@@ -2,7 +2,7 @@
 
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Language.Fortran.Extra.JSON.Literals where
+module Language.Fortran.Extra.JSON.Literals() where
 
 import Language.Fortran.Extra.JSON.Helpers
 import Language.Fortran.Extra.JSON.Supporting()

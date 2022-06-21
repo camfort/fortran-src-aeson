@@ -27,7 +27,6 @@ source-repository head
 library
   exposed-modules:
       Language.Fortran.Extra.JSON
-      Language.Fortran.Extra.JSON.Example
       Language.Fortran.Extra.JSON.Helpers
       Language.Fortran.Extra.JSON.Literals
       Language.Fortran.Extra.JSON.Supporting

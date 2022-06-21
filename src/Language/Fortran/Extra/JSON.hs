@@ -1,3 +1,19 @@
+{- | Aeson instances for the Fortran AST defined in fortran-src.
+
+As of fortran-src v0.10.0, most node types store an annotation and a 'SrcSpan'.
+The general approach to instance design is as follows:
+
+  * Annotations are placed in @anno@ fields.
+  * Spans are placed in @span@ fields.
+  * Where possible, we use a generic derivation that takes field names from the
+    data type. (This works for most single-constructor product types.)
+  * For sum types, an object is created storing an annotation, span and tag. The
+    tag indicates the constructor being used. The other fields are then
+    "flattened" into the tag object. (This isn't what Aeson's generic derivation
+    does by default due to safety concerns, but it can be nicer for JSON.)
+
+-}
+
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE OverloadedStrings #-}
 
@@ -10,9 +26,6 @@ import Data.Aeson hiding ( Value )
 import Language.Fortran.AST
 import Data.Text qualified as Text
 import Data.Text ( Text )
-
---------------------------------------------------------------------------------
--- Standalone definitions
 
 -- Assorted
 deriving via String instance ToJSON (Comment a)
